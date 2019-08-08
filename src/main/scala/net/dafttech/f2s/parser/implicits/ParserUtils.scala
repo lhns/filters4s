@@ -1,11 +1,11 @@
-package net.dafttech.f2s.parser.parserutils
+package net.dafttech.f2s.parser.implicits
 
 import java.util.regex.Pattern
 
 import fastparse.NoWhitespace._
 import fastparse._
 
-object ParserUtils {
+trait ParserUtils {
   def isSpace(char: Char): Boolean = Pattern.matches("\\s", String.valueOf(char))
 
   def space[_: P]: P[Unit] = CharPred(isSpace).opaque("space")

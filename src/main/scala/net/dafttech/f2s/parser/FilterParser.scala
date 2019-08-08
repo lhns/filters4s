@@ -5,8 +5,7 @@ import fastparse._
 import net.dafttech.f2s.ast.ColumnFilter.Logic.{False, True}
 import net.dafttech.f2s.ast.ColumnFilter._
 import net.dafttech.f2s.ast.{ColumnFilter, Value}
-import net.dafttech.f2s.parser.parserutils.ParserUtils._
-import net.dafttech.f2s.parser.parserutils.implicits._
+import net.dafttech.f2s.parser.implicits._
 
 object FilterParser {
 
