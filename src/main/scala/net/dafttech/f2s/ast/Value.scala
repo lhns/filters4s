@@ -2,7 +2,7 @@ package net.dafttech.f2s.ast
 
 import java.time.{LocalDate, LocalDateTime}
 
-import net.dafttech.f2s.util.RichString2._
+import net.dafttech.f2s.implicits._
 
 import scala.math.BigDecimal
 

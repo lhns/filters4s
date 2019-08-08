@@ -4,7 +4,7 @@ import java.time.temporal.TemporalAdjusters
 import java.time.{LocalDate, LocalDateTime}
 
 import cats.syntax.option._
-import net.dafttech.f2s.util.RichString2._
+import net.dafttech.f2s.implicits._
 
 case class TimePattern(year: String, month: String, day: String, hour: String, minute: String, second: String) {
   def toTimeRange: Option[TimeRange] = {
