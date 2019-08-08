@@ -13,6 +13,7 @@ lazy val f2s = project.in(file("."))
 
     libraryDependencies ++= Seq(
       "io.monix" %% "monix" % "3.0.0-RC3",
+      "org.typelevel" %% "cats-core" % "2.0.0-RC1",
       "com.lihaoyi" %% "fastparse" % "2.1.3",
       "io.circe" %% "circe-core" % "0.11.1",
       "io.circe" %% "circe-generic" % "0.11.1",
