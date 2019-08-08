@@ -2,9 +2,6 @@ package net.dafttech.f2s.ast
 
 import net.dafttech.f2s.ast.ColumnFilter.{ColRef, Comp, ConstValue, Op}
 
-/**
- * Created by u016595 on 11.11.2016.
- */
 case class Column[V] private(name: String, valueType: String) {
   def ===(value: Value): Comp = Comp(ColRef(this), Op.Eq, ConstValue(value))
 
@@ -18,13 +15,7 @@ case class Column[V] private(name: String, valueType: String) {
 
   def >=(value: Value): Comp = Comp(ColRef(this), Op.GEq, ConstValue(value))
 
-  def like(value: Value): Comp = this === value //ColumnFilter.ColumnComp(this, Operator.Like, value)
-
   private val groupSize = 30
-
-  //def withVirtual(virtual: Boolean): Column[V] = Column(name, virtual)(valueType)
-
-  //def virtual: Boolean = _virtual.value
 
   def in(values: Seq[Value]): ColumnFilter = {
     val comps = values.map(this === _)
@@ -41,7 +32,4 @@ case class Column[V] private(name: String, valueType: String) {
 
     groupRec(comps)
   }
-
-  //val rep: Rep[V]
-  //def ===(column: Column[V]) = rep === column.rep
 }

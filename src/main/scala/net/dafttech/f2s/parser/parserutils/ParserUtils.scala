@@ -5,9 +5,6 @@ import java.util.regex.Pattern
 import fastparse.NoWhitespace._
 import fastparse._
 
-/**
- * Created by u016595 on 12.09.2016.
- */
 object ParserUtils {
   def isSpace(char: Char): Boolean = Pattern.matches("\\s", String.valueOf(char))
 

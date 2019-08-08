@@ -6,9 +6,6 @@ import net.dafttech.f2s.util.RichString2._
 
 import scala.math.BigDecimal
 
-/**
- * Created by u016595 on 11.11.2016.
- */
 abstract class Value {
   self =>
   type V
@@ -38,9 +35,6 @@ object Value {
       case string: String => StringValue(string)
       case timestamp: LocalDateTime => TimestampValue(timestamp)
       case date: LocalDate =>
-        /*def dayStart(date: LocalDate): LocalDateTime = LocalDateTime.of(date, LocalTime.of(0, 0, 0))
-        def dayEnd(date: LocalDate): LocalDateTime = dayStart(date).plusDays(1)
-        TimeRangeValue(TimeRange(dayStart(date), dayEnd(date)))*/
         TimePatternValue(TimePattern(date.getYear.toString.padLeft(4, "0"), date.getMonthValue.toString.padLeft(2, "0"), date.getDayOfMonth.toString.padLeft(2, "0"), "*", "*", "*"))
       case timeRange: TimeRange => TimeRangeValue(timeRange)
       case timePattern: TimePattern => TimePatternValue(timePattern)

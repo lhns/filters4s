@@ -6,9 +6,6 @@ import fastparse._
 
 import scala.util.Try
 
-/**
- * Created by u016595 on 22.02.2017.
- */
 object implicits {
 
   implicit class RichParser[T](val self: P[T]) extends AnyVal {

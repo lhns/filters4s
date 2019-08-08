@@ -1,58 +1,12 @@
 package net.dafttech.f2s.parser
 
-import java.time.LocalDate
-
 import fastparse.NoWhitespace._
 import fastparse._
 import net.dafttech.f2s.ast.ColumnFilter.Logic.{False, True}
 import net.dafttech.f2s.ast.ColumnFilter._
-import net.dafttech.f2s.ast.{ColumnFilter, Table, TimePattern, Value}
+import net.dafttech.f2s.ast.{ColumnFilter, Value}
 import net.dafttech.f2s.parser.parserutils.ParserUtils._
 import net.dafttech.f2s.parser.parserutils.implicits._
-
-/**
- * Created by u016595 on 14.11.2016.
- */
-class FilterParser(val table: Table) {
-  val substitutions: Map[String, () => Value] = Map(
-    "#today" -> (() => Value(LocalDate.now)),
-    "#yesterday" -> (() => Value(LocalDate.now.plusDays(-1))),
-    "#thismonth" -> { () =>
-      val now = LocalDate.now
-      Value(TimePattern.of(now.getYear.toString, now.getMonthValue.toString, "*", "*", "*", "*"))
-    },
-    "#lastmonth" -> { () =>
-      val now = LocalDate.now.plusMonths(-1)
-      Value(TimePattern.of(now.getYear.toString, now.getMonthValue.toString, "*", "*", "*", "*"))
-    },
-    "#thisyear" -> { () =>
-      val now = LocalDate.now
-      Value(TimePattern.of(now.getYear.toString, "*", "*", "*", "*", "*"))
-    },
-    "#lastyear" -> { () =>
-      val now = LocalDate.now.plusYears(-1)
-      Value(TimePattern.of(now.getYear.toString, "*", "*", "*", "*", "*"))
-    }
-  )
-
-  /*def parser[_: P]: P[Either[DBError, ColumnFilter]] = LogicParser.parser.map { filter =>
-    FilterCompiler.resolveColumns(filter, table)
-      .map(_.transform {
-        case Comp(ColRef(col), op, ConstValue(value)) if Platform() != Platform.JS =>
-          for {
-            key <- value.getAs[String].map(_.toLowerCase)
-            substitutionF <- substitutions.get(key)
-          } yield
-            Comp(ColRef(col), op, ConstValue(substitutionF()))
-
-        case _ => none
-      })
-      .map(table.desugarFilter)
-      .map(FilterCompiler.centrifugeFilter)
-  }
-
-  val default: Either[DBError, ColumnFilter] = False.asRight[DBError]*/
-}
 
 object FilterParser {
 
@@ -124,7 +78,7 @@ object FilterParser {
         case (start, end) => (
           /*Value(ValueType.timestamp.getMinValue(start).get),
           Value(ValueType.timestamp.getMaxValue(end).get)*/
-          (start, end)
+          (start, end) // TODO /\ recover this
           )
       }
 

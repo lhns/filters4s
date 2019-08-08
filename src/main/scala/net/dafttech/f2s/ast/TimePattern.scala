@@ -6,9 +6,6 @@ import java.time.{LocalDate, LocalDateTime}
 import cats.syntax.option._
 import net.dafttech.f2s.util.RichString2._
 
-/**
- * Created by u016595 on 02.01.2017.
- */
 case class TimePattern(year: String, month: String, day: String, hour: String, minute: String, second: String) {
   def toTimeRange: Option[TimeRange] = {
     val patternString = s"$year$month$day$hour$minute$second"

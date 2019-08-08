@@ -6,9 +6,6 @@ import net.dafttech.f2s.ast.Value._
 import net.dafttech.f2s.ast.{TimePattern, Value}
 import net.dafttech.f2s.parser.parserutils.ParserUtils._
 
-/**
- * Created by u016595 on 14.11.2016.
- */
 object ValueParser {
   def nullValue[_: P]: P[NullValue.type] = IgnoreCase("null").map(_ => NullValue).opaque("null")
 

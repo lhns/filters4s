@@ -2,11 +2,8 @@ package net.dafttech.f2s.ast
 
 import cats.syntax.option._
 import monix.eval.Coeval
-import net.dafttech.f2s.ast.ColumnFilter.{Comp, Logic}
+import net.dafttech.f2s.ast.ColumnFilter.Logic
 
-/**
- * Created by u016595 on 11.11.2016.
- */
 trait ColumnFilter {
   def &&(filter: ColumnFilter): Logic.And = Logic.And(this, filter)
 
@@ -16,12 +13,6 @@ trait ColumnFilter {
 
   def unary_! : ColumnFilter = Logic.Not(this)
 
-  def desugarColumn(f: Comp => ColumnFilter): ColumnFilter = transform {
-    case comp: Comp =>
-      f(comp).some
-
-    case _ => none
-  }
 
   def transform(f: ColumnFilter => Option[ColumnFilter]): ColumnFilter
 
@@ -88,18 +79,6 @@ object ColumnFilter {
         case Or(a, b) => Coeval.now(Seq(a, b))
       }
     }
-
-    /*def or(filters: List[ColumnFilter]): ColumnFilter = {
-      @tailrec
-      def orRec(filters: List[ColumnFilter], filter: Option[ColumnFilter]): ColumnFilter = filters match {
-        case Nil => filter.getOrElse(False)
-        case a :: tail =>
-          val f = filter Then_ (Or(_, a)) Else a
-          orRec(tail, f.some)
-      }
-
-      orRec(filters, none)
-    }*/
 
     case class Xor(a: ColumnFilter,
                    b: ColumnFilter) extends Logic {
@@ -211,31 +190,4 @@ object ColumnFilter {
     }
 
   }
-
-  /*class ColumnComp(val column: Column[_], op: Op, value: Value) extends Comp(column.name, op, value) {
-    override def unary_! : ColumnFilter = ColumnComp(column, !op, value)
-
-    override def transform(f: ColumnFilter => Option[ColumnFilter]): ColumnFilter =
-      f(this).getOrElse(this)
-  }
-
-  object ColumnComp {
-    def apply(column: Column[_], op: Op, value: Value): ColumnComp =
-      new ColumnComp(column, op, value)
-
-    def unapply(value: ColumnComp): Option[(Column[_], Op, Value)] = value match {
-      case value: ColumnComp => (value.column, value.op, value.value).some
-      case _ => none
-    }
-  }*/
-
-  class Compiled(val underlying: ColumnFilter) extends ColumnFilter {
-    //override def unary_! : ColumnFilter = !underlying
-
-    override val string: String = underlying.string
-
-    override def transform(f: ColumnFilter => Option[ColumnFilter]): ColumnFilter =
-      f(underlying).map(new Compiled(_)).getOrElse(this)
-  }
-
 }

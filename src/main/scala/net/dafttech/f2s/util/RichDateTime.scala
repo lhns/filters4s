@@ -6,9 +6,6 @@ import net.dafttech.f2s.util.RichDateTime._
 
 import scala.language.implicitConversions
 
-/**
- * Created by u016595 on 07.02.2017.
- */
 class RichLocalDateTime(val self: LocalDateTime) extends AnyVal {
   def ===(other: LocalDateTime): Boolean = self.isEqual(other)
 
