@@ -1,4 +1,4 @@
-package net.dafttech.f2s.parser.implicits
+package net.dafttech.filters4s.parser.implicits
 
 import fastparse._
 

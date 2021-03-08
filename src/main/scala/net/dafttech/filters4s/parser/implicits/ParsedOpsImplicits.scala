@@ -1,4 +1,4 @@
-package net.dafttech.f2s.parser.implicits
+package net.dafttech.filters4s.parser.implicits
 
 import cats.syntax.either._
 import fastparse.Parsed

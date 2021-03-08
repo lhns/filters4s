@@ -1,5 +1,5 @@
 inThisBuild(Seq(
-  name := "Fancy Filter for Scala",
+  name := "filters4s",
   organization := "net.dafttech",
 
   scalaVersion := "2.13.5"

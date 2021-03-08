@@ -1,10 +1,10 @@
-package net.dafttech.f2s.parser
+package net.dafttech.filters4s.parser
 
 import fastparse.NoWhitespace._
 import fastparse._
-import net.dafttech.f2s.ast.Value._
-import net.dafttech.f2s.ast.{TimePattern, Value}
-import net.dafttech.f2s.parser.implicits._
+import net.dafttech.filters4s.ast.Value._
+import net.dafttech.filters4s.ast.{TimePattern, Value}
+import net.dafttech.filters4s.parser.implicits._
 
 object ValueParser {
   def nullValue[_: P]: P[NullValue.type] = IgnoreCase("null").map(_ => NullValue).opaque("null")

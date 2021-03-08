@@ -1,4 +1,4 @@
-package net.dafttech.f2s.implicits
+package net.dafttech.filters4s.implicits
 
 import scala.language.implicitConversions
 

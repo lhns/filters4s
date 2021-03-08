@@ -1,4 +1,4 @@
-package net.dafttech.f2s.ast
+package net.dafttech.filters4s.ast
 
 abstract class Table(val name: String) {
   def columns: List[Column[_]]

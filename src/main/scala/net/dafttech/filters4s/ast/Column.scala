@@ -1,6 +1,6 @@
-package net.dafttech.f2s.ast
+package net.dafttech.filters4s.ast
 
-import net.dafttech.f2s.ast.ColumnFilter.{ColRef, Comp, ConstValue, Op}
+import net.dafttech.filters4s.ast.ColumnFilter.{ColRef, Comp, ConstValue, Op}
 
 case class Column[V] private(name: String, valueType: String) {
   def ===(value: Value): Comp = Comp(ColRef(this), Op.Eq, ConstValue(value))

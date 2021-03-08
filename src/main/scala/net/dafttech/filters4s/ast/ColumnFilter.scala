@@ -1,8 +1,8 @@
-package net.dafttech.f2s.ast
+package net.dafttech.filters4s.ast
 
 import cats.syntax.option._
 import monix.eval.Coeval
-import net.dafttech.f2s.ast.ColumnFilter.Logic
+import net.dafttech.filters4s.ast.ColumnFilter.Logic
 
 trait ColumnFilter {
   def &&(filter: ColumnFilter): Logic.And = Logic.And(this, filter)

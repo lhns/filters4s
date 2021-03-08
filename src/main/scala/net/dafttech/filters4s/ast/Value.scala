@@ -1,8 +1,8 @@
-package net.dafttech.f2s.ast
+package net.dafttech.filters4s.ast
 
 import java.time.{LocalDate, LocalDateTime}
 
-import net.dafttech.f2s.implicits._
+import net.dafttech.filters4s.implicits._
 
 import scala.math.BigDecimal
 

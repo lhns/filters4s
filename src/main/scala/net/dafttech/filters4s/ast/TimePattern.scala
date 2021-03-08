@@ -1,10 +1,10 @@
-package net.dafttech.f2s.ast
+package net.dafttech.filters4s.ast
 
 import java.time.temporal.TemporalAdjusters
 import java.time.{LocalDate, LocalDateTime}
 
 import cats.syntax.option._
-import net.dafttech.f2s.implicits._
+import net.dafttech.filters4s.implicits._
 
 case class TimePattern(year: String, month: String, day: String, hour: String, minute: String, second: String) {
   def toTimeRange: Option[TimeRange] = {
