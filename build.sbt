@@ -12,7 +12,7 @@ lazy val f2s = project.in(file("."))
     version := "0.0.0",
 
     libraryDependencies ++= Seq(
-      "org.scalameta" %% "munit" % "0.7.25" % Test,
+      "org.scalameta" %% "munit" % "0.7.26" % Test,
       "io.monix" %% "monix" % "3.4.0",
       "org.typelevel" %% "cats-core" % "2.4.2",
       "com.lihaoyi" %% "fastparse" % "2.3.2",
