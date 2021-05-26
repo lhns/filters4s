@@ -16,9 +16,9 @@ lazy val f2s = project.in(file("."))
       "io.monix" %% "monix" % "3.4.0",
       "org.typelevel" %% "cats-core" % "2.6.1",
       "com.lihaoyi" %% "fastparse" % "2.3.2",
-      "io.circe" %% "circe-core" % "0.14.0",
-      "io.circe" %% "circe-generic" % "0.14.0",
-      "io.circe" %% "circe-parser" % "0.14.0"
+      "io.circe" %% "circe-core" % "0.14.1",
+      "io.circe" %% "circe-generic" % "0.14.1",
+      "io.circe" %% "circe-parser" % "0.14.1"
     ),
 
     testFrameworks += new TestFramework("munit.Framework"),
