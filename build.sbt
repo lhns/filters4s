@@ -14,7 +14,7 @@ lazy val f2s = project.in(file("."))
     libraryDependencies ++= Seq(
       "org.scalameta" %% "munit" % "0.7.26" % Test,
       "io.monix" %% "monix" % "3.4.0",
-      "org.typelevel" %% "cats-core" % "2.4.2",
+      "org.typelevel" %% "cats-core" % "2.6.1",
       "com.lihaoyi" %% "fastparse" % "2.3.2",
       "io.circe" %% "circe-core" % "0.14.0",
       "io.circe" %% "circe-generic" % "0.14.0",
