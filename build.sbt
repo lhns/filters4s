@@ -15,7 +15,7 @@ lazy val f2s = project.in(file("."))
       "org.scalameta" %% "munit" % "0.7.27" % Test,
       "io.monix" %% "monix" % "3.4.0",
       "org.typelevel" %% "cats-core" % "2.6.1",
-      "com.lihaoyi" %% "fastparse" % "2.3.2",
+      "com.lihaoyi" %% "fastparse" % "2.3.3",
       "io.circe" %% "circe-core" % "0.14.1",
       "io.circe" %% "circe-generic" % "0.14.1",
       "io.circe" %% "circe-parser" % "0.14.1"
