@@ -1,7 +1,7 @@
 package net.dafttech.filters4s.ast
 
+import cats.Eval
 import cats.syntax.option._
-import monix.eval.Coeval
 import net.dafttech.filters4s.ast.ColumnFilter.Logic
 
 trait ColumnFilter {
@@ -42,14 +42,14 @@ object ColumnFilter {
 
       def unapply(and: And): Option[Seq[ColumnFilter]] = unfold(and).value.some
 
-      def unfold(and: And): Coeval[Seq[ColumnFilter]] = and match {
-        case And(a: And, b: And) => Coeval.defer(for {
+      def unfold(and: And): Eval[Seq[ColumnFilter]] = and match {
+        case And(a: And, b: And) => Eval.defer(for {
           aSeq <- unfold(a)
           bSeq <- unfold(b)
         } yield aSeq ++ bSeq)
-        case And(a: And, b) => Coeval.defer(for (aSeq <- unfold(a)) yield aSeq :+ b)
-        case And(a, b: And) => Coeval.defer(for (bSeq <- unfold(b)) yield a +: bSeq)
-        case And(a, b) => Coeval.now(Seq(a, b))
+        case And(a: And, b) => Eval.defer(for (aSeq <- unfold(a)) yield aSeq :+ b)
+        case And(a, b: And) => Eval.defer(for (bSeq <- unfold(b)) yield a +: bSeq)
+        case And(a, b) => Eval.now(Seq(a, b))
       }
     }
 
@@ -69,14 +69,14 @@ object ColumnFilter {
 
       def unapply(or: Or): Option[Seq[ColumnFilter]] = unfold(or).value.some
 
-      def unfold(or: Or): Coeval[Seq[ColumnFilter]] = or match {
-        case Or(a: Or, b: Or) => Coeval.defer(for {
+      def unfold(or: Or): Eval[Seq[ColumnFilter]] = or match {
+        case Or(a: Or, b: Or) => Eval.defer(for {
           aSeq <- unfold(a)
           bSeq <- unfold(b)
         } yield aSeq ++ bSeq)
-        case Or(a: Or, b) => Coeval.defer(for (aSeq <- unfold(a)) yield aSeq :+ b)
-        case Or(a, b: Or) => Coeval.defer(for (bSeq <- unfold(b)) yield a +: bSeq)
-        case Or(a, b) => Coeval.now(Seq(a, b))
+        case Or(a: Or, b) => Eval.defer(for (aSeq <- unfold(a)) yield aSeq :+ b)
+        case Or(a, b: Or) => Eval.defer(for (bSeq <- unfold(b)) yield a +: bSeq)
+        case Or(a, b) => Eval.now(Seq(a, b))
       }
     }
 
