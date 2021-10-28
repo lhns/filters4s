@@ -13,16 +13,14 @@ object Simplify {
     case op: Op[_, T] =>
       op.foldToTerm[Eval](
         eq = {
-          case eq if eq.operandTermType == TermType.BoolType =>
-            val Eq(a, b) = eq.asInstanceOf[Eq[Boolean]]
+          case Eq(TermType.BoolType(a), TermType.BoolType(b)) =>
             Eval.defer(Simplify(XNOr(a, b)))
 
           case eq =>
             Eval.now(eq)
         },
         neq = {
-          case neq if neq.operandTermType == TermType.BoolType =>
-            val NEq(a, b) = neq.asInstanceOf[NEq[Boolean]]
+          case NEq(TermType.BoolType(a), TermType.BoolType(b)) =>
             Eval.defer(Simplify(XOr(a, b)))
 
           case neq =>
@@ -70,6 +68,7 @@ object Simplify {
   def apply[T](term: Term[T]): Eval[Term[T]] = term match {
     case op: Op[_, T] =>
       op.transformOperands[Id](identity)
+      ??? // todo
 
 
     case term => Eval.now(term)
