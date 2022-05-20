@@ -1,0 +1,325 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/expr",
+  "definitions": {
+    "const": {
+      "type": "object",
+      "properties": {
+        "const": {},
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "const",
+        "type"
+      ]
+    },
+    "ref": {
+      "type": "object",
+      "properties": {
+        "ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "ref"
+      ]
+    },
+    "scope": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "expr": {
+              "$ref": "#/definitions/const"
+            }
+          },
+          "required": [
+            "name",
+            "expr"
+          ]
+        }
+      },
+      "required": [
+        "scope"
+      ]
+    },
+    "scopeRef": {
+      "type": "object",
+      "properties": {
+        "scopeRef": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "scopeRef"
+      ]
+    },
+    "func": {
+      "type": "object",
+      "properties": {
+        "func": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "args": {
+              "type": [
+                "array",
+                "object"
+              ],
+              "items": {
+                "$ref": "#/definitions/expr"
+              },
+              "patternProperties": {
+                "": {
+                  "$ref": "#/definitions/expr"
+                }
+              }
+            }
+          },
+          "required": [
+            "name",
+            "args"
+          ]
+        }
+      },
+      "required": [
+        "func"
+      ]
+    },
+    "and": {
+      "type": "object",
+      "properties": {
+        "and": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "#/definitions/expr"
+          }
+        }
+      },
+      "required": [
+        "and"
+      ]
+    },
+    "or": {
+      "type": "object",
+      "properties": {
+        "or": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "#/definitions/expr"
+          }
+        }
+      },
+      "required": [
+        "or"
+      ]
+    },
+    "xor": {
+      "type": "object",
+      "properties": {
+        "xor": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "#/definitions/expr"
+          }
+        }
+      },
+      "required": [
+        "xor"
+      ]
+    },
+    "not": {
+      "type": "object",
+      "properties": {
+        "not": {
+          "$ref": "#/definitions/expr"
+        }
+      },
+      "required": [
+        "not"
+      ]
+    },
+    "equal": {
+      "type": "object",
+      "properties": {
+        "equal": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "$ref": "#/definitions/expr"
+          }
+        }
+      },
+      "required": [
+        "equal"
+      ]
+    },
+    "greater": {
+      "type": "object",
+      "properties": {
+        "greater": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "$ref": "#/definitions/expr"
+          }
+        }
+      },
+      "required": [
+        "greater"
+      ]
+    },
+    "less": {
+      "type": "object",
+      "properties": {
+        "less": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "$ref": "#/definitions/expr"
+          }
+        }
+      },
+      "required": [
+        "less"
+      ]
+    },
+    "greaterEqual": {
+      "type": "object",
+      "properties": {
+        "greaterEqual": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "$ref": "#/definitions/expr"
+          }
+        }
+      },
+      "required": [
+        "greaterEqual"
+      ]
+    },
+    "lessEqual": {
+      "type": "object",
+      "properties": {
+        "lessEqual": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "$ref": "#/definitions/expr"
+          }
+        }
+      },
+      "required": [
+        "lessEqual"
+      ]
+    },
+    "like": {
+      "type": "object",
+      "properties": {
+        "like": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "anyChars": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "required": [
+                  "anyChars"
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/const"
+                  },
+                  {
+                    "properties": {
+                      "const": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "const": "string"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "like"
+      ]
+    },
+    "expr": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/const"
+        },
+        {
+          "$ref": "#/definitions/ref"
+        },
+        {
+          "$ref": "#/definitions/scope"
+        },
+        {
+          "$ref": "#/definitions/scopeRef"
+        },
+        {
+          "$ref": "#/definitions/and"
+        },
+        {
+          "$ref": "#/definitions/or"
+        },
+        {
+          "$ref": "#/definitions/xor"
+        },
+        {
+          "$ref": "#/definitions/not"
+        },
+        {
+          "$ref": "#/definitions/equal"
+        },
+        {
+          "$ref": "#/definitions/greater"
+        },
+        {
+          "$ref": "#/definitions/less"
+        },
+        {
+          "$ref": "#/definitions/greaterEqual"
+        },
+        {
+          "$ref": "#/definitions/lessEqual"
+        },
+        {
+          "$ref": "#/definitions/like"
+        }
+      ]
+    }
+  }
+}
