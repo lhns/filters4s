@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "expr": {
+      "$ref": "/filter-expr-ast.json"
+    },
+    "const": {
+      "$ref": "/filter-expr-ast.json#/$defs/const"
+    },
+    "values": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/const"
+      }
+    },
+    "select": {
+      "type": "object",
+      "properties": {
+        "select": {
+          "type": "object",
+          "properties": {
+            "repo": {
+              "type": "string"
+            },
+            "filter": {
+              "$ref": "#/$defs/expr"
+            },
+            "order": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ref": {
+                    "type": "string"
+                  },
+                  "reverse": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "ref",
+                  "reverse"
+                ]
+              }
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "repo",
+            "filter"
+          ]
+        }
+      },
+      "required": [
+        "select"
+      ]
+    },
+    "insert": {
+      "type": "object",
+      "properties": {
+        "insert": {
+          "type": "object",
+          "properties": {
+            "repo": {
+              "type": "string"
+            },
+            "values": {
+              "$ref": "#/$defs/values"
+            }
+          },
+          "required": [
+            "repo",
+            "values"
+          ]
+        }
+      },
+      "required": [
+        "insert"
+      ]
+    },
+    "update": {
+      "type": "object",
+      "properties": {
+        "update": {
+          "type": "object",
+          "properties": {
+            "repo": {
+              "type": "string"
+            },
+            "filter": {
+              "$ref": "#/$defs/expr"
+            },
+            "values": {
+              "$ref": "#/$defs/values"
+            }
+          },
+          "required": [
+            "repo",
+            "filter",
+            "values"
+          ]
+        }
+      },
+      "required": [
+        "update"
+      ]
+    },
+    "delete": {
+      "type": "object",
+      "properties": {
+        "delete": {
+          "type": "object",
+          "properties": {
+            "repo": {
+              "type": "string"
+            },
+            "filter": {
+              "$ref": "#/$defs/expr"
+            }
+          },
+          "required": [
+            "repo",
+            "filter"
+          ]
+        }
+      },
+      "required": [
+        "delete"
+      ]
+    },
+    "query": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/select"
+        },
+        {
+          "$ref": "#/$defs/insert"
+        },
+        {
+          "$ref": "#/$defs/update"
+        },
+        {
+          "$ref": "#/$defs/delete"
+        }
+      ]
+    }
+  },
+  "$ref": "#/$defs/query"
+}

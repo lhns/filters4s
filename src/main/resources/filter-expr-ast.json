@@ -1,7 +1,6 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "$ref": "#/definitions/expr",
-  "definitions": {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
     "const": {
       "type": "object",
       "properties": {
@@ -25,10 +24,10 @@
               "type": "string"
             },
             "expr": {
-              "$ref": "#/definitions/expr"
+              "$ref": "#/$defs/expr"
             },
             "scope": {
-              "$ref": "#/definitions/expr"
+              "$ref": "#/$defs/expr"
             }
           },
           "required": [
@@ -79,12 +78,10 @@
                 "object"
               ],
               "items": {
-                "$ref": "#/definitions/expr"
+                "$ref": "#/$defs/expr"
               },
-              "patternProperties": {
-                "": {
-                  "$ref": "#/definitions/expr"
-                }
+              "additionalProperties": {
+                "$ref": "#/$defs/expr"
               }
             }
           },
@@ -105,7 +102,7 @@
           "type": "array",
           "minItems": 2,
           "items": {
-            "$ref": "#/definitions/expr"
+            "$ref": "#/$defs/expr"
           }
         }
       },
@@ -120,7 +117,7 @@
           "type": "array",
           "minItems": 2,
           "items": {
-            "$ref": "#/definitions/expr"
+            "$ref": "#/$defs/expr"
           }
         }
       },
@@ -135,7 +132,7 @@
           "type": "array",
           "minItems": 2,
           "items": {
-            "$ref": "#/definitions/expr"
+            "$ref": "#/$defs/expr"
           }
         }
       },
@@ -147,7 +144,7 @@
       "type": "object",
       "properties": {
         "not": {
-          "$ref": "#/definitions/expr"
+          "$ref": "#/$defs/expr"
         }
       },
       "required": [
@@ -162,7 +159,7 @@
           "minItems": 2,
           "maxItems": 2,
           "items": {
-            "$ref": "#/definitions/expr"
+            "$ref": "#/$defs/expr"
           }
         }
       },
@@ -178,7 +175,7 @@
           "minItems": 2,
           "maxItems": 2,
           "items": {
-            "$ref": "#/definitions/expr"
+            "$ref": "#/$defs/expr"
           }
         }
       },
@@ -194,7 +191,7 @@
           "minItems": 2,
           "maxItems": 2,
           "items": {
-            "$ref": "#/definitions/expr"
+            "$ref": "#/$defs/expr"
           }
         }
       },
@@ -210,7 +207,7 @@
           "minItems": 2,
           "maxItems": 2,
           "items": {
-            "$ref": "#/definitions/expr"
+            "$ref": "#/$defs/expr"
           }
         }
       },
@@ -226,7 +223,7 @@
           "minItems": 2,
           "maxItems": 2,
           "items": {
-            "$ref": "#/definitions/expr"
+            "$ref": "#/$defs/expr"
           }
         }
       },
@@ -257,7 +254,7 @@
               {
                 "allOf": [
                   {
-                    "$ref": "#/definitions/const"
+                    "$ref": "#/$defs/const"
                   },
                   {
                     "properties": {
@@ -282,51 +279,52 @@
     "expr": {
       "oneOf": [
         {
-          "$ref": "#/definitions/const"
+          "$ref": "#/$defs/const"
         },
         {
-          "$ref": "#/definitions/var"
+          "$ref": "#/$defs/var"
         },
         {
-          "$ref": "#/definitions/varRef"
+          "$ref": "#/$defs/varRef"
         },
         {
-          "$ref": "#/definitions/ref"
+          "$ref": "#/$defs/ref"
         },
         {
-          "$ref": "#/definitions/func"
+          "$ref": "#/$defs/func"
         },
         {
-          "$ref": "#/definitions/and"
+          "$ref": "#/$defs/and"
         },
         {
-          "$ref": "#/definitions/or"
+          "$ref": "#/$defs/or"
         },
         {
-          "$ref": "#/definitions/xor"
+          "$ref": "#/$defs/xor"
         },
         {
-          "$ref": "#/definitions/not"
+          "$ref": "#/$defs/not"
         },
         {
-          "$ref": "#/definitions/equal"
+          "$ref": "#/$defs/equal"
         },
         {
-          "$ref": "#/definitions/greater"
+          "$ref": "#/$defs/greater"
         },
         {
-          "$ref": "#/definitions/less"
+          "$ref": "#/$defs/less"
         },
         {
-          "$ref": "#/definitions/greaterEqual"
+          "$ref": "#/$defs/greaterEqual"
         },
         {
-          "$ref": "#/definitions/lessEqual"
+          "$ref": "#/$defs/lessEqual"
         },
         {
-          "$ref": "#/definitions/like"
+          "$ref": "#/$defs/like"
         }
       ]
     }
-  }
+  },
+  "$ref": "#/$defs/expr"
 }
