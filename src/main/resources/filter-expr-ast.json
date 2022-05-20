@@ -243,7 +243,10 @@
                 "type": "object",
                 "properties": {
                   "anyChars": {
-                    "type": "integer",
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
                     "minimum": 1
                   }
                 },
@@ -252,21 +255,7 @@
                 ]
               },
               {
-                "allOf": [
-                  {
-                    "$ref": "#/$defs/const"
-                  },
-                  {
-                    "properties": {
-                      "const": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "const": "string"
-                      }
-                    }
-                  }
-                ]
+                "type": "string"
               }
             ]
           }

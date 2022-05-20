@@ -9,19 +9,10 @@
 - \>
 - <=
 - \>=
+- not
 - and
 - or
 - xor
-
-()
-
-name = ("a" or "b" or "c")
-
-age { > 10 and < 20 }
-
-(a or b) { > 10 and < 20 }
-
-"\*test\*" is the same as * { = "" }
 
 ## AST
 
@@ -29,31 +20,30 @@ age { > 10 and < 20 }
 {
   "and": [
     {
-      "ref": "isActive"
+      "ref": "is_active"
     },
     {
       "or": [
         {
           "not": {
-            "equals": [
+            "equal": [
               {
-                "const": "test"
+                "const": "test",
+                "type": "string"
               },
               {
                 "ref": "name"
               }
             ]
-          },
+          }
+        },
+        {
           "like": [
-            {
-              "const": "test"
-            },
+            "hello",
             {
               "anyChars": 1
             },
-            {
-              "const": "asdf"
-            },
+            "world",
             {
               "anyChars": null
             }
