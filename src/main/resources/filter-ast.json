@@ -15,6 +15,44 @@
         "type"
       ]
     },
+    "var": {
+      "type": "object",
+      "properties": {
+        "var": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "expr": {
+              "$ref": "#/definitions/expr"
+            },
+            "scope": {
+              "$ref": "#/definitions/expr"
+            }
+          },
+          "required": [
+            "name",
+            "expr",
+            "scope"
+          ]
+        }
+      },
+      "required": [
+        "var"
+      ]
+    },
+    "varRef": {
+      "type": "object",
+      "properties": {
+        "varRef": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "varRef"
+      ]
+    },
     "ref": {
       "type": "object",
       "properties": {
@@ -24,40 +62,6 @@
       },
       "required": [
         "ref"
-      ]
-    },
-    "scope": {
-      "type": "object",
-      "properties": {
-        "scope": {
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string"
-            },
-            "expr": {
-              "$ref": "#/definitions/const"
-            }
-          },
-          "required": [
-            "name",
-            "expr"
-          ]
-        }
-      },
-      "required": [
-        "scope"
-      ]
-    },
-    "scopeRef": {
-      "type": "object",
-      "properties": {
-        "scopeRef": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "scopeRef"
       ]
     },
     "func": {
@@ -281,13 +285,16 @@
           "$ref": "#/definitions/const"
         },
         {
+          "$ref": "#/definitions/var"
+        },
+        {
+          "$ref": "#/definitions/varRef"
+        },
+        {
           "$ref": "#/definitions/ref"
         },
         {
-          "$ref": "#/definitions/scope"
-        },
-        {
-          "$ref": "#/definitions/scopeRef"
+          "$ref": "#/definitions/func"
         },
         {
           "$ref": "#/definitions/and"
