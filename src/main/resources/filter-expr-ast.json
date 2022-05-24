@@ -235,30 +235,42 @@
       "type": "object",
       "properties": {
         "like": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "oneOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "anyChars": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "minimum": 1
+          "type": "object",
+          "properties": {
+            "expr": {
+              "$ref": "#/$defs/expr"
+            },
+            "pattern": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "anyChars": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "minimum": 1
+                      }
+                    },
+                    "required": [
+                      "anyChars"
+                    ]
+                  },
+                  {
+                    "type": "string"
                   }
-                },
-                "required": [
-                  "anyChars"
                 ]
-              },
-              {
-                "type": "string"
               }
-            ]
-          }
+            }
+          },
+          "required": [
+            "expr",
+            "pattern"
+          ]
         }
       },
       "required": [

@@ -38,16 +38,21 @@
           }
         },
         {
-          "like": [
-            "hello",
-            {
-              "anyChars": 1
+          "like": {
+            "expr": {
+              "ref": "description"
             },
-            "world",
-            {
-              "anyChars": null
-            }
-          ]
+            "pattern": [
+              "hello",
+              {
+                "anyChars": 1
+              },
+              "world",
+              {
+                "anyChars": null
+              }
+            ]
+          }
         }
       ]
     }
