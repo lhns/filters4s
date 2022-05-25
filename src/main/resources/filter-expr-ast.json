@@ -14,10 +14,10 @@
         "type"
       ]
     },
-    "var": {
+    "varDef": {
       "type": "object",
       "properties": {
-        "var": {
+        "varDef": {
           "type": "object",
           "properties": {
             "name": {
@@ -283,7 +283,7 @@
           "$ref": "#/$defs/const"
         },
         {
-          "$ref": "#/$defs/var"
+          "$ref": "#/$defs/varDef"
         },
         {
           "$ref": "#/$defs/varRef"

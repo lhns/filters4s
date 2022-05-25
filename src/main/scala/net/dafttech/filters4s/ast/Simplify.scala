@@ -9,22 +9,15 @@ object Simplify {
     println(term)
   }
 
-  private def transformBottomUp[T](term: Term[T]): Eval[Term[T]] = term match { // TODO: Transform multiple levels?
-    case op: Op[_, T] =>
+  private def transformBottomUp[T](term: Expr): Eval[Expr] = term match { // TODO: Transform multiple levels?
+    case op: Op =>
       op.foldToTerm[Eval](
         eq = {
-          case Eq(TermType.BoolType(a), TermType.BoolType(b)) =>
-            Eval.defer(Simplify(XNOr(a, b)))
+          case Eq(ExprType.BoolType(a), ExprType.BoolType(b)) =>
+            Eval.defer(Simplify(Not(XOr(a, b))))
 
           case eq =>
             Eval.now(eq)
-        },
-        neq = {
-          case NEq(TermType.BoolType(a), TermType.BoolType(b)) =>
-            Eval.defer(Simplify(XOr(a, b)))
-
-          case neq =>
-            Eval.now(neq)
         },
         le = {
           case le => Eval.now(le)
@@ -55,18 +48,18 @@ object Simplify {
     case term => Eval.now(term)
   }
 
-  private def transformTreeBottomUp[T](term: Term[T]): Eval[Term[T]] = {
-    def transformOp[A](op: Op[A, T]): Eval[Term[T]] =
+  private def transformTreeBottomUp(term: Expr): Eval[Expr] = {
+    def transformOp(op: Op): Eval[Expr] =
       Eval.defer(op.transformOperands[Eval](transformTreeBottomUp(_).flatMap(transformBottomUp)))
 
     term match {
-      case op: Op[_, T] => transformOp(op)
+      case op: Op => transformOp(op)
       case term => Eval.now(term)
     }
   }
 
-  def apply[T](term: Term[T]): Eval[Term[T]] = term match {
-    case op: Op[_, T] =>
+  def apply(term: Expr): Eval[Expr] = term match {
+    case op: Op =>
       op.transformOperands[Id](identity)
       ??? // todo
 
