@@ -8,15 +8,14 @@ sealed abstract class ExprType[T](
                                    val eq: Eq[T],
                                    val ordering: Ordering[T]
                                  ) {
-  def unapply[A <: Expr](term: A): Option[A] =
-    if (term.tpe == this) term.asInstanceOf[A].some
-    else none
+  def unapply[A <: Expr](expr: A): Option[A] =
+    Option.when(expr.tpeOption.contains(this))(expr)
 }
 
 object ExprType {
   @inline def apply[T](implicit termType: ExprType[T]): ExprType[T] = termType
 
-  private implicit def eqFromOrdering[A](implicit ordering: Ordering[A]): Eq[A] = Eq.instance[A](ordering.equiv)
+  //private implicit def eqFromOrdering[A](implicit ordering: Ordering[A]): Eq[A] = Eq.instance[A](ordering.equiv)
 
   implicit object NullType extends ExprType[Unit]
 

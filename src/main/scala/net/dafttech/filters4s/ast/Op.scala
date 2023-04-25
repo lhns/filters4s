@@ -21,7 +21,7 @@ sealed abstract class Op extends Expr {
                or: Or => C,
              ): C
 
-  def foldToTerm[F[_] : Monad](
+  def foldToExpr[F[_] : Monad](
                                 eq: Eq => F[Expr],
                                 le: Le => F[Expr],
                                 gt: Gt => F[Expr],
@@ -33,10 +33,12 @@ sealed abstract class Op extends Expr {
                               ): F[Expr]
 
   def transformOperands[F[_] : Monad](f: Expr => F[Expr]): F[Self]
+
+  override val tpeOption: Option[ExprType[_]] = Some(ExprType.BoolType)
 }
 
 object Op {
-  implicit class TermOps[T](val self: Expr) extends AnyVal {
+  implicit class ExprOps[T](val self: Expr) extends AnyVal {
     def ===(expr: Expr): Eq = Eq(self, expr)
 
     def =!=(expr: Expr): Not = Not(Eq(self, expr))
@@ -56,8 +58,6 @@ object Op {
     def &&(expr: Expr): And = And(self, expr)
 
     def ||(expr: Expr): Or = Or(self, expr)
-
-    def ^^(expr: Expr): XOr = XOr(self, expr)
   }
 
   case class Eq(a: Expr, b: Expr) extends Op {
@@ -74,7 +74,7 @@ object Op {
                           or: Or => C,
                         ): C = eq(this)
 
-    override def foldToTerm[F[_] : Monad](
+    override def foldToExpr[F[_] : Monad](
                                            eq: Eq => F[Expr],
                                            le: Le => F[Expr],
                                            gt: Gt => F[Expr],
@@ -108,7 +108,7 @@ object Op {
                           or: Or => C,
                         ): C = le(this)
 
-    override def foldToTerm[F[_] : Monad](
+    override def foldToExpr[F[_] : Monad](
                                            eq: Eq => F[Expr],
                                            le: Le => F[Expr],
                                            gt: Gt => F[Expr],
@@ -142,7 +142,7 @@ object Op {
                           or: Or => C,
                         ): C = gt(this)
 
-    override def foldToTerm[F[_] : Monad](
+    override def foldToExpr[F[_] : Monad](
                                            eq: Eq => F[Expr],
                                            le: Le => F[Expr],
                                            gt: Gt => F[Expr],
@@ -176,7 +176,7 @@ object Op {
                           or: Or => C,
                         ): C = leq(this)
 
-    override def foldToTerm[F[_] : Monad](
+    override def foldToExpr[F[_] : Monad](
                                            eq: Eq => F[Expr],
                                            le: Le => F[Expr],
                                            gt: Gt => F[Expr],
@@ -210,7 +210,7 @@ object Op {
                           or: Or => C,
                         ): C = geq(this)
 
-    override def foldToTerm[F[_] : Monad](
+    override def foldToExpr[F[_] : Monad](
                                            eq: Eq => F[Expr],
                                            le: Le => F[Expr],
                                            gt: Gt => F[Expr],
@@ -244,7 +244,7 @@ object Op {
                           or: Or => C,
                         ): C = or(Or(bSeq.map(b => a === b)))
 
-    override def foldToTerm[F[_] : Monad](
+    override def foldToExpr[F[_] : Monad](
                                            eq: Eq => F[Expr],
                                            le: Le => F[Expr],
                                            gt: Gt => F[Expr],
@@ -278,7 +278,7 @@ object Op {
                           or: Or => C,
                         ): C = not(this)
 
-    override def foldToTerm[F[_] : Monad](
+    override def foldToExpr[F[_] : Monad](
                                            eq: Eq => F[Expr],
                                            le: Le => F[Expr],
                                            gt: Gt => F[Expr],
@@ -313,7 +313,7 @@ object Op {
                           or: Or => C,
                         ): C = and(this)
 
-    override def foldToTerm[F[_] : Monad](
+    override def foldToExpr[F[_] : Monad](
                                            eq: Eq => F[Expr],
                                            le: Le => F[Expr],
                                            gt: Gt => F[Expr],
@@ -352,7 +352,7 @@ object Op {
                           or: Or => C,
                         ): C = or(this)
 
-    override def foldToTerm[F[_] : Monad](
+    override def foldToExpr[F[_] : Monad](
                                            eq: Eq => F[Expr],
                                            le: Le => F[Expr],
                                            gt: Gt => F[Expr],
@@ -373,73 +373,5 @@ object Op {
 
   object Or {
     def apply(expr0: Expr, exprs: Expr*): Or = Or(expr0 +: exprs)
-  }
-
-  case class XOr(a: Expr, b: Expr) extends Op {
-    override type Self = XOr
-
-    override def fold[C](
-                          eq: Eq => C,
-                          le: Le => C,
-                          gt: Gt => C,
-                          leq: LEq => C,
-                          geq: GEq => C,
-                          not: Not => C,
-                          and: And => C,
-                          or: Or => C,
-                        ): C = or((a && !b) || (!a && b))
-
-    override def foldToTerm[F[_] : Monad](
-                                           eq: Eq => F[Expr],
-                                           le: Le => F[Expr],
-                                           gt: Gt => F[Expr],
-                                           leq: LEq => F[Expr],
-                                           geq: GEq => F[Expr],
-                                           not: Not => F[Expr],
-                                           and: And => F[Expr],
-                                           or: Or => F[Expr]
-                                         ): F[Expr] =
-      fold(eq, le, gt, leq, geq, not, and, or)
-
-    override def transformOperands[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
-      for {
-        a2 <- f(a)
-        b2 <- f(b)
-      } yield
-        XOr(a2, b2)
-  }
-
-  case class XNOr(a: Expr, b: Expr) extends Op {
-    override type Self = XNOr
-
-    override def fold[C](
-                          eq: Eq => C,
-                          le: Le => C,
-                          gt: Gt => C,
-                          leq: LEq => C,
-                          geq: GEq => C,
-                          not: Not => C,
-                          and: And => C,
-                          or: Or => C,
-                        ): C = or((a && b) || (!a && !b)) // TODO: TRANSFORM MULTIPLE LEVELS
-
-    override def foldToTerm[F[_] : Monad](
-                                           eq: Eq => F[Expr],
-                                           le: Le => F[Expr],
-                                           gt: Gt => F[Expr],
-                                           leq: LEq => F[Expr],
-                                           geq: GEq => F[Expr],
-                                           not: Not => F[Expr],
-                                           and: And => F[Expr],
-                                           or: Or => F[Expr]
-                                         ): F[Expr] =
-      fold(eq, le, gt, leq, geq, not, and, or)
-
-    override def transformOperands[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
-      for {
-        a2 <- f(a)
-        b2 <- f(b)
-      } yield
-        XNOr(a2, b2)
   }
 }

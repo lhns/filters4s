@@ -10,14 +10,13 @@
         }
       },
       "required": [
-        "const",
-        "type"
+        "const"
       ]
     },
-    "varDef": {
+    "varScope": {
       "type": "object",
       "properties": {
-        "varDef": {
+        "varScope": {
           "type": "object",
           "properties": {
             "name": {
@@ -26,19 +25,19 @@
             "expr": {
               "$ref": "#/$defs/expr"
             },
-            "scope": {
+            "body": {
               "$ref": "#/$defs/expr"
             }
           },
           "required": [
             "name",
             "expr",
-            "scope"
+            "body"
           ]
         }
       },
       "required": [
-        "var"
+        "varScope"
       ]
     },
     "varRef": {
@@ -283,7 +282,7 @@
           "$ref": "#/$defs/const"
         },
         {
-          "$ref": "#/$defs/varDef"
+          "$ref": "#/$defs/varScope"
         },
         {
           "$ref": "#/$defs/varRef"

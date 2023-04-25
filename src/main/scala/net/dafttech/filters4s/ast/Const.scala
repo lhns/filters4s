@@ -1,7 +1,7 @@
 package net.dafttech.filters4s.ast
 
 case class Const[T](value: T, tpe: ExprType[T]) extends Expr {
-
+  override val tpeOption: Option[ExprType[_]] = Some(tpe)
 }
 
 object Const {
