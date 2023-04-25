@@ -13,9 +13,7 @@ sealed abstract class Op extends Expr {
   def fold[C](
                eq: Eq => C,
                le: Le => C,
-               gt: Gt => C,
                leq: LEq => C,
-               geq: GEq => C,
                not: Not => C,
                and: And => C,
                or: Or => C,
@@ -24,9 +22,7 @@ sealed abstract class Op extends Expr {
   def foldToExpr[F[_] : Monad](
                                 eq: Eq => F[Expr],
                                 le: Le => F[Expr],
-                                gt: Gt => F[Expr],
                                 leq: LEq => F[Expr],
-                                geq: GEq => F[Expr],
                                 not: Not => F[Expr],
                                 and: And => F[Expr],
                                 or: Or => F[Expr],
@@ -45,11 +41,11 @@ object Op {
 
     def <(expr: Expr): Le = Le(self, expr)
 
-    def >(expr: Expr): Gt = Gt(self, expr)
+    def >(expr: Expr): Not = Not(LEq(self, expr))
 
     def <=(expr: Expr): LEq = LEq(self, expr)
 
-    def >=(expr: Expr): GEq = GEq(self, expr)
+    def >=(expr: Expr): Not = Not(Le(self, expr))
 
     def in(exprs: Seq[Expr]): In = In(self, exprs)
 
@@ -66,9 +62,7 @@ object Op {
     override def fold[C](
                           eq: Eq => C,
                           le: Le => C,
-                          gt: Gt => C,
                           leq: LEq => C,
-                          geq: GEq => C,
                           not: Not => C,
                           and: And => C,
                           or: Or => C,
@@ -77,14 +71,12 @@ object Op {
     override def foldToExpr[F[_] : Monad](
                                            eq: Eq => F[Expr],
                                            le: Le => F[Expr],
-                                           gt: Gt => F[Expr],
                                            leq: LEq => F[Expr],
-                                           geq: GEq => F[Expr],
                                            not: Not => F[Expr],
                                            and: And => F[Expr],
                                            or: Or => F[Expr]
                                          ): F[Expr] =
-      fold(eq, le, gt, leq, geq, not, and, or)
+      fold(eq, le, leq, not, and, or)
 
     override def transformOperands[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
       for {
@@ -100,9 +92,7 @@ object Op {
     override def fold[C](
                           eq: Eq => C,
                           le: Le => C,
-                          gt: Gt => C,
                           leq: LEq => C,
-                          geq: GEq => C,
                           not: Not => C,
                           and: And => C,
                           or: Or => C,
@@ -111,14 +101,12 @@ object Op {
     override def foldToExpr[F[_] : Monad](
                                            eq: Eq => F[Expr],
                                            le: Le => F[Expr],
-                                           gt: Gt => F[Expr],
                                            leq: LEq => F[Expr],
-                                           geq: GEq => F[Expr],
                                            not: Not => F[Expr],
                                            and: And => F[Expr],
                                            or: Or => F[Expr]
                                          ): F[Expr] =
-      fold(eq, le, gt, leq, geq, not, and, or)
+      fold(eq, le, leq, not, and, or)
 
     override def transformOperands[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
       for {
@@ -128,49 +116,13 @@ object Op {
         Le(a2, b2)
   }
 
-  case class Gt(a: Expr, b: Expr) extends Op {
-    override type Self = Gt
-
-    override def fold[C](
-                          eq: Eq => C,
-                          le: Le => C,
-                          gt: Gt => C,
-                          leq: LEq => C,
-                          geq: GEq => C,
-                          not: Not => C,
-                          and: And => C,
-                          or: Or => C,
-                        ): C = gt(this)
-
-    override def foldToExpr[F[_] : Monad](
-                                           eq: Eq => F[Expr],
-                                           le: Le => F[Expr],
-                                           gt: Gt => F[Expr],
-                                           leq: LEq => F[Expr],
-                                           geq: GEq => F[Expr],
-                                           not: Not => F[Expr],
-                                           and: And => F[Expr],
-                                           or: Or => F[Expr]
-                                         ): F[Expr] =
-      fold(eq, le, gt, leq, geq, not, and, or)
-
-    override def transformOperands[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
-      for {
-        a2 <- f(a)
-        b2 <- f(b)
-      } yield
-        Gt(a2, b2)
-  }
-
   case class LEq(a: Expr, b: Expr) extends Op {
     override type Self = LEq
 
     override def fold[C](
                           eq: Eq => C,
                           le: Le => C,
-                          gt: Gt => C,
                           leq: LEq => C,
-                          geq: GEq => C,
                           not: Not => C,
                           and: And => C,
                           or: Or => C,
@@ -179,14 +131,12 @@ object Op {
     override def foldToExpr[F[_] : Monad](
                                            eq: Eq => F[Expr],
                                            le: Le => F[Expr],
-                                           gt: Gt => F[Expr],
                                            leq: LEq => F[Expr],
-                                           geq: GEq => F[Expr],
                                            not: Not => F[Expr],
                                            and: And => F[Expr],
                                            or: Or => F[Expr]
                                          ): F[Expr] =
-      fold(eq, le, gt, leq, geq, not, and, or)
+      fold(eq, le, leq, not, and, or)
 
     override def transformOperands[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
       for {
@@ -196,49 +146,13 @@ object Op {
         LEq(a2, b2)
   }
 
-  case class GEq(a: Expr, b: Expr) extends Op {
-    override type Self = GEq
-
-    override def fold[C](
-                          eq: Eq => C,
-                          le: Le => C,
-                          gt: Gt => C,
-                          leq: LEq => C,
-                          geq: GEq => C,
-                          not: Not => C,
-                          and: And => C,
-                          or: Or => C,
-                        ): C = geq(this)
-
-    override def foldToExpr[F[_] : Monad](
-                                           eq: Eq => F[Expr],
-                                           le: Le => F[Expr],
-                                           gt: Gt => F[Expr],
-                                           leq: LEq => F[Expr],
-                                           geq: GEq => F[Expr],
-                                           not: Not => F[Expr],
-                                           and: And => F[Expr],
-                                           or: Or => F[Expr]
-                                         ): F[Expr] =
-      fold(eq, le, gt, leq, geq, not, and, or)
-
-    override def transformOperands[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
-      for {
-        a2 <- f(a)
-        b2 <- f(b)
-      } yield
-        GEq(a2, b2)
-  }
-
   case class In(a: Expr, bSeq: Seq[Expr]) extends Op {
     override type Self = In
 
     override def fold[C](
                           eq: Eq => C,
                           le: Le => C,
-                          gt: Gt => C,
                           leq: LEq => C,
-                          geq: GEq => C,
                           not: Not => C,
                           and: And => C,
                           or: Or => C,
@@ -247,14 +161,12 @@ object Op {
     override def foldToExpr[F[_] : Monad](
                                            eq: Eq => F[Expr],
                                            le: Le => F[Expr],
-                                           gt: Gt => F[Expr],
                                            leq: LEq => F[Expr],
-                                           geq: GEq => F[Expr],
                                            not: Not => F[Expr],
                                            and: And => F[Expr],
                                            or: Or => F[Expr]
                                          ): F[Expr] =
-      fold(eq, le, gt, leq, geq, not, and, or)
+      fold(eq, le, leq, not, and, or)
 
     override def transformOperands[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
       for {
@@ -270,9 +182,7 @@ object Op {
     override def fold[C](
                           eq: Eq => C,
                           le: Le => C,
-                          gt: Gt => C,
                           leq: LEq => C,
-                          geq: GEq => C,
                           not: Not => C,
                           and: And => C,
                           or: Or => C,
@@ -281,14 +191,12 @@ object Op {
     override def foldToExpr[F[_] : Monad](
                                            eq: Eq => F[Expr],
                                            le: Le => F[Expr],
-                                           gt: Gt => F[Expr],
                                            leq: LEq => F[Expr],
-                                           geq: GEq => F[Expr],
                                            not: Not => F[Expr],
                                            and: And => F[Expr],
                                            or: Or => F[Expr]
                                          ): F[Expr] =
-      fold(eq, le, gt, leq, geq, not, and, or)
+      fold(eq, le, leq, not, and, or)
 
     override def transformOperands[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
       for {
@@ -305,9 +213,7 @@ object Op {
     override def fold[C](
                           eq: Eq => C,
                           le: Le => C,
-                          gt: Gt => C,
                           leq: LEq => C,
-                          geq: GEq => C,
                           not: Not => C,
                           and: And => C,
                           or: Or => C,
@@ -316,14 +222,12 @@ object Op {
     override def foldToExpr[F[_] : Monad](
                                            eq: Eq => F[Expr],
                                            le: Le => F[Expr],
-                                           gt: Gt => F[Expr],
                                            leq: LEq => F[Expr],
-                                           geq: GEq => F[Expr],
                                            not: Not => F[Expr],
                                            and: And => F[Expr],
                                            or: Or => F[Expr]
                                          ): F[Expr] =
-      fold(eq, le, gt, leq, geq, not, and, or)
+      fold(eq, le, leq, not, and, or)
 
     override def transformOperands[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
       for {
@@ -344,9 +248,7 @@ object Op {
     override def fold[C](
                           eq: Eq => C,
                           le: Le => C,
-                          gt: Gt => C,
                           leq: LEq => C,
-                          geq: GEq => C,
                           not: Not => C,
                           and: And => C,
                           or: Or => C,
@@ -355,14 +257,12 @@ object Op {
     override def foldToExpr[F[_] : Monad](
                                            eq: Eq => F[Expr],
                                            le: Le => F[Expr],
-                                           gt: Gt => F[Expr],
                                            leq: LEq => F[Expr],
-                                           geq: GEq => F[Expr],
                                            not: Not => F[Expr],
                                            and: And => F[Expr],
                                            or: Or => F[Expr]
                                          ): F[Expr] =
-      fold(eq, le, gt, leq, geq, not, and, or)
+      fold(eq, le, leq, not, and, or)
 
     override def transformOperands[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
       for {

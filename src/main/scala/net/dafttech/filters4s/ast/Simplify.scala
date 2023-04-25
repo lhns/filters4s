@@ -9,49 +9,64 @@ object Simplify {
     println(expr)
   }
 
-  private def transformBottomUp[T](expr: Expr): Eval[Expr] = expr match { // TODO: Transform multiple levels?
+  private def transformBottomUp(expr: Expr): Eval[Expr] = expr match { // TODO: Transform multiple levels?
     case op: Op =>
       op.foldToExpr[Eval](
         eq = {
           case Eq(ExprType.BoolType(a), ExprType.BoolType(b)) =>
             Eval.defer(Simplify((a && b) || (!a && !b)))
 
+          case Eq(Ref(a), Ref(b)) if a == b =>
+            Eval.now(Const.True)
+
           case eq =>
             Eval.now(eq)
         },
-        le = { le =>
-          Eval.now(le)
+        le = {
+          case Le(ExprType.BoolType(a), ExprType.BoolType(b)) =>
+            Eval.defer(Simplify(!a && b))
+
+          case le =>
+            Eval.now(le)
         },
-        gt = { case Gt(a, b) =>
-          ???
+        //gt = {},
+        leq = {
+          case LEq(ExprType.BoolType(a), ExprType.BoolType(b)) =>
+            Eval.defer(Simplify(!a || b))
+
+          case lEq =>
+            Eval.now(lEq)
         },
-        leq = { case LEq(a, b) =>
-          ???
-        },
-        geq = { case GEq(a, b) =>
-          ???
-        },
+        //geq = {},
         not = {
           case Not(Not(expr)) => Eval.defer(Simplify(expr))
           case Not(And(exprs)) => Eval.defer(Simplify(Or(exprs.map(!_))))
           case Not(Or(exprs)) => Eval.defer(Simplify(And(exprs.map(!_))))
-          case Not(Le(a, b)) => Eval.defer(Simplify(GEq(a, b)))
-          case Not(Gt(a, b)) => Eval.defer(Simplify(LEq(a, b)))
-          case Not(LEq(a, b)) => Eval.defer(Simplify(Gt(a, b)))
-          case Not(GEq(a, b)) => Eval.defer(Simplify(Le(a, b)))
+          //case Not(Le(a, b)) => Eval.defer(Simplify(GEq(a, b)))
+          //case Not(Gt(a, b)) => Eval.defer(Simplify(LEq(a, b)))
+          //case Not(LEq(a, b)) => Eval.defer(Simplify(Gt(a, b)))
+          //case Not(GEq(a, b)) => Eval.defer(Simplify(Le(a, b)))
+          case Not(Const.True) => Eval.now(Const.False)
+          case Not(Const.False) => Eval.now(Const.True)
           case Not(expr) => Simplify(expr).map(Not(_))
         },
-        and = { case And(exprs) =>
-          Eval.defer(And(exprs.flatMap {
-            case And(exprs) => exprs
-            case expr => List(expr)
-          }))
+        and = {
+          case And(exprs) if exprs.contains(Const.False) =>
+            Eval.now(Const.False)
+          case And(exprs) =>
+            Eval.now(And(exprs.flatMap {
+              case And(exprs) => exprs
+              case expr => List(expr)
+            }))
         },
-        or = { case Or(exprs) =>
-          Eval.defer(Or(exprs.flatMap {
-            case Or(exprs) => exprs
-            case expr => List(expr)
-          }))
+        or = {
+          case Or(exprs) if exprs.contains(Const.True) =>
+            Eval.now(Const.True)
+          case Or(exprs) =>
+            Eval.now(Or(exprs.flatMap {
+              case Or(exprs) => exprs
+              case expr => List(expr)
+            }))
         },
       )
 
