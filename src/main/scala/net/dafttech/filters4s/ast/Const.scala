@@ -5,7 +5,11 @@ case class Const[T](value: T, tpe: ExprType[T]) extends Expr {
 }
 
 object Const {
-  object True extends Const(true, ExprType.BoolType)
+  object True extends Const(true, ExprType.BoolType) {
+    override def toString: String = "True"
+  }
 
-  object False extends Const(false, ExprType.BoolType)
+  object False extends Const(false, ExprType.BoolType) {
+    override def toString: String = "False"
+  }
 }

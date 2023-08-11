@@ -10,25 +10,16 @@ import net.dafttech.filters4s.ast.Op._
 sealed abstract class Op extends Expr {
   type Self <: Op
 
-  def fold[C](
-               eq: Eq => C,
-               le: Le => C,
-               leq: LEq => C,
-               not: Not => C,
-               and: And => C,
-               or: Or => C,
-             ): C
+  def foldOp[C](
+                 eq: Eq => C,
+                 le: Le => C,
+                 leq: LEq => C,
+                 not: Not => C,
+                 and: And => C,
+                 or: Or => C,
+               ): C
 
-  def foldToExpr[F[_] : Monad](
-                                eq: Eq => F[Expr],
-                                le: Le => F[Expr],
-                                leq: LEq => F[Expr],
-                                not: Not => F[Expr],
-                                and: And => F[Expr],
-                                or: Or => F[Expr],
-                              ): F[Expr]
-
-  def transformOperands[F[_] : Monad](f: Expr => F[Expr]): F[Self]
+  def transformOperandsF[F[_] : Monad](f: Expr => F[Expr]): F[Self]
 
   override val tpeOption: Option[ExprType[_]] = Some(ExprType.BoolType)
 }
@@ -59,26 +50,16 @@ object Op {
   case class Eq(a: Expr, b: Expr) extends Op {
     override type Self = Eq
 
-    override def fold[C](
-                          eq: Eq => C,
-                          le: Le => C,
-                          leq: LEq => C,
-                          not: Not => C,
-                          and: And => C,
-                          or: Or => C,
-                        ): C = eq(this)
+    override def foldOp[C](
+                            eq: Eq => C,
+                            le: Le => C,
+                            leq: LEq => C,
+                            not: Not => C,
+                            and: And => C,
+                            or: Or => C,
+                          ): C = eq(this)
 
-    override def foldToExpr[F[_] : Monad](
-                                           eq: Eq => F[Expr],
-                                           le: Le => F[Expr],
-                                           leq: LEq => F[Expr],
-                                           not: Not => F[Expr],
-                                           and: And => F[Expr],
-                                           or: Or => F[Expr]
-                                         ): F[Expr] =
-      fold(eq, le, leq, not, and, or)
-
-    override def transformOperands[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
+    override def transformOperandsF[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
       for {
         a2 <- f(a)
         b2 <- f(b)
@@ -89,26 +70,16 @@ object Op {
   case class Le(a: Expr, b: Expr) extends Op {
     override type Self = Le
 
-    override def fold[C](
-                          eq: Eq => C,
-                          le: Le => C,
-                          leq: LEq => C,
-                          not: Not => C,
-                          and: And => C,
-                          or: Or => C,
-                        ): C = le(this)
+    override def foldOp[C](
+                            eq: Eq => C,
+                            le: Le => C,
+                            leq: LEq => C,
+                            not: Not => C,
+                            and: And => C,
+                            or: Or => C,
+                          ): C = le(this)
 
-    override def foldToExpr[F[_] : Monad](
-                                           eq: Eq => F[Expr],
-                                           le: Le => F[Expr],
-                                           leq: LEq => F[Expr],
-                                           not: Not => F[Expr],
-                                           and: And => F[Expr],
-                                           or: Or => F[Expr]
-                                         ): F[Expr] =
-      fold(eq, le, leq, not, and, or)
-
-    override def transformOperands[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
+    override def transformOperandsF[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
       for {
         a2 <- f(a)
         b2 <- f(b)
@@ -119,26 +90,16 @@ object Op {
   case class LEq(a: Expr, b: Expr) extends Op {
     override type Self = LEq
 
-    override def fold[C](
-                          eq: Eq => C,
-                          le: Le => C,
-                          leq: LEq => C,
-                          not: Not => C,
-                          and: And => C,
-                          or: Or => C,
-                        ): C = leq(this)
+    override def foldOp[C](
+                            eq: Eq => C,
+                            le: Le => C,
+                            leq: LEq => C,
+                            not: Not => C,
+                            and: And => C,
+                            or: Or => C,
+                          ): C = leq(this)
 
-    override def foldToExpr[F[_] : Monad](
-                                           eq: Eq => F[Expr],
-                                           le: Le => F[Expr],
-                                           leq: LEq => F[Expr],
-                                           not: Not => F[Expr],
-                                           and: And => F[Expr],
-                                           or: Or => F[Expr]
-                                         ): F[Expr] =
-      fold(eq, le, leq, not, and, or)
-
-    override def transformOperands[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
+    override def transformOperandsF[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
       for {
         a2 <- f(a)
         b2 <- f(b)
@@ -149,26 +110,16 @@ object Op {
   case class In(a: Expr, bSeq: Seq[Expr]) extends Op {
     override type Self = In
 
-    override def fold[C](
-                          eq: Eq => C,
-                          le: Le => C,
-                          leq: LEq => C,
-                          not: Not => C,
-                          and: And => C,
-                          or: Or => C,
-                        ): C = or(Or(bSeq.map(b => a === b)))
+    override def foldOp[C](
+                            eq: Eq => C,
+                            le: Le => C,
+                            leq: LEq => C,
+                            not: Not => C,
+                            and: And => C,
+                            or: Or => C,
+                          ): C = or(Or(bSeq.map(b => a === b)))
 
-    override def foldToExpr[F[_] : Monad](
-                                           eq: Eq => F[Expr],
-                                           le: Le => F[Expr],
-                                           leq: LEq => F[Expr],
-                                           not: Not => F[Expr],
-                                           and: And => F[Expr],
-                                           or: Or => F[Expr]
-                                         ): F[Expr] =
-      fold(eq, le, leq, not, and, or)
-
-    override def transformOperands[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
+    override def transformOperandsF[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
       for {
         a2 <- f(a)
         bSeq2 <- bSeq.map(f).sequence
@@ -179,26 +130,16 @@ object Op {
   case class Not(expr: Expr) extends Op {
     override type Self = Not
 
-    override def fold[C](
-                          eq: Eq => C,
-                          le: Le => C,
-                          leq: LEq => C,
-                          not: Not => C,
-                          and: And => C,
-                          or: Or => C,
-                        ): C = not(this)
+    override def foldOp[C](
+                            eq: Eq => C,
+                            le: Le => C,
+                            leq: LEq => C,
+                            not: Not => C,
+                            and: And => C,
+                            or: Or => C,
+                          ): C = not(this)
 
-    override def foldToExpr[F[_] : Monad](
-                                           eq: Eq => F[Expr],
-                                           le: Le => F[Expr],
-                                           leq: LEq => F[Expr],
-                                           not: Not => F[Expr],
-                                           and: And => F[Expr],
-                                           or: Or => F[Expr]
-                                         ): F[Expr] =
-      fold(eq, le, leq, not, and, or)
-
-    override def transformOperands[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
+    override def transformOperandsF[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
       for {
         expr2 <- f(expr)
       } yield
@@ -210,26 +151,16 @@ object Op {
 
     override def toString: String = productPrefix + exprs.mkString("(", ",", ")")
 
-    override def fold[C](
-                          eq: Eq => C,
-                          le: Le => C,
-                          leq: LEq => C,
-                          not: Not => C,
-                          and: And => C,
-                          or: Or => C,
-                        ): C = and(this)
+    override def foldOp[C](
+                            eq: Eq => C,
+                            le: Le => C,
+                            leq: LEq => C,
+                            not: Not => C,
+                            and: And => C,
+                            or: Or => C,
+                          ): C = and(this)
 
-    override def foldToExpr[F[_] : Monad](
-                                           eq: Eq => F[Expr],
-                                           le: Le => F[Expr],
-                                           leq: LEq => F[Expr],
-                                           not: Not => F[Expr],
-                                           and: And => F[Expr],
-                                           or: Or => F[Expr]
-                                         ): F[Expr] =
-      fold(eq, le, leq, not, and, or)
-
-    override def transformOperands[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
+    override def transformOperandsF[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
       for {
         exprs2 <- exprs.map(f).sequence
       } yield
@@ -245,26 +176,16 @@ object Op {
 
     override def toString: String = productPrefix + exprs.mkString("(", ",", ")")
 
-    override def fold[C](
-                          eq: Eq => C,
-                          le: Le => C,
-                          leq: LEq => C,
-                          not: Not => C,
-                          and: And => C,
-                          or: Or => C,
-                        ): C = or(this)
+    override def foldOp[C](
+                            eq: Eq => C,
+                            le: Le => C,
+                            leq: LEq => C,
+                            not: Not => C,
+                            and: And => C,
+                            or: Or => C,
+                          ): C = or(this)
 
-    override def foldToExpr[F[_] : Monad](
-                                           eq: Eq => F[Expr],
-                                           le: Le => F[Expr],
-                                           leq: LEq => F[Expr],
-                                           not: Not => F[Expr],
-                                           and: And => F[Expr],
-                                           or: Or => F[Expr]
-                                         ): F[Expr] =
-      fold(eq, le, leq, not, and, or)
-
-    override def transformOperands[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
+    override def transformOperandsF[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
       for {
         exprs2 <- exprs.map(f).sequence
       } yield
