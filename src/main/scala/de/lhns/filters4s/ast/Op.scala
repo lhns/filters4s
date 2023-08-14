@@ -1,19 +1,19 @@
-package net.dafttech.filters4s.ast
+package de.lhns.filters4s.ast
 
 import cats.Monad
 import cats.instances.seq._
 import cats.syntax.flatMap._
 import cats.syntax.functor._
 import cats.syntax.traverse._
-import net.dafttech.filters4s.ast.Op._
+import de.lhns.filters4s.ast.Op._
 
 sealed abstract class Op extends Expr {
   type Self <: Op
 
   def foldOp[C](
                  eq: Eq => C,
-                 le: Le => C,
-                 leq: LEq => C,
+                 lt: Lt => C,
+                 gt: Gt => C,
                  not: Not => C,
                  and: And => C,
                  or: Or => C,
@@ -30,13 +30,13 @@ object Op {
 
     def =!=(expr: Expr): Not = Not(Eq(self, expr))
 
-    def <(expr: Expr): Le = Le(self, expr)
+    def <(expr: Expr): Lt = Lt(self, expr)
 
-    def >(expr: Expr): Not = Not(LEq(self, expr))
+    def >(expr: Expr): Gt = Gt(self, expr)
 
-    def <=(expr: Expr): LEq = LEq(self, expr)
+    def <=(expr: Expr): Not = Not(Gt(self, expr))
 
-    def >=(expr: Expr): Not = Not(Le(self, expr))
+    def >=(expr: Expr): Not = Not(Lt(self, expr))
 
     def in(exprs: Seq[Expr]): In = In(self, exprs)
 
@@ -52,8 +52,8 @@ object Op {
 
     override def foldOp[C](
                             eq: Eq => C,
-                            le: Le => C,
-                            leq: LEq => C,
+                            le: Lt => C,
+                            gt: Gt => C,
                             not: Not => C,
                             and: And => C,
                             or: Or => C,
@@ -67,13 +67,13 @@ object Op {
         Eq(a2, b2)
   }
 
-  case class Le(a: Expr, b: Expr) extends Op {
-    override type Self = Le
+  case class Lt(a: Expr, b: Expr) extends Op {
+    override type Self = Lt
 
     override def foldOp[C](
                             eq: Eq => C,
-                            le: Le => C,
-                            leq: LEq => C,
+                            le: Lt => C,
+                            gt: Gt => C,
                             not: Not => C,
                             and: And => C,
                             or: Or => C,
@@ -84,27 +84,27 @@ object Op {
         a2 <- f(a)
         b2 <- f(b)
       } yield
-        Le(a2, b2)
+        Lt(a2, b2)
   }
 
-  case class LEq(a: Expr, b: Expr) extends Op {
-    override type Self = LEq
+  case class Gt(a: Expr, b: Expr) extends Op {
+    override type Self = Gt
 
     override def foldOp[C](
                             eq: Eq => C,
-                            le: Le => C,
-                            leq: LEq => C,
+                            lt: Lt => C,
+                            gt: Gt => C,
                             not: Not => C,
                             and: And => C,
                             or: Or => C,
-                          ): C = leq(this)
+                          ): C = gt(this)
 
     override def transformOperandsF[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
       for {
         a2 <- f(a)
         b2 <- f(b)
       } yield
-        LEq(a2, b2)
+        Gt(a2, b2)
   }
 
   case class In(a: Expr, bSeq: Seq[Expr]) extends Op {
@@ -112,8 +112,8 @@ object Op {
 
     override def foldOp[C](
                             eq: Eq => C,
-                            le: Le => C,
-                            leq: LEq => C,
+                            lt: Lt => C,
+                            gt: Gt => C,
                             not: Not => C,
                             and: And => C,
                             or: Or => C,
@@ -132,8 +132,8 @@ object Op {
 
     override def foldOp[C](
                             eq: Eq => C,
-                            le: Le => C,
-                            leq: LEq => C,
+                            le: Lt => C,
+                            gt: Gt => C,
                             not: Not => C,
                             and: And => C,
                             or: Or => C,
@@ -153,8 +153,8 @@ object Op {
 
     override def foldOp[C](
                             eq: Eq => C,
-                            le: Le => C,
-                            leq: LEq => C,
+                            le: Lt => C,
+                            gt: Gt => C,
                             not: Not => C,
                             and: And => C,
                             or: Or => C,
@@ -178,8 +178,8 @@ object Op {
 
     override def foldOp[C](
                             eq: Eq => C,
-                            le: Le => C,
-                            leq: LEq => C,
+                            le: Lt => C,
+                            gt: Gt => C,
                             not: Not => C,
                             and: And => C,
                             or: Or => C,

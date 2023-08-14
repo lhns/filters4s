@@ -1,4 +1,4 @@
-package net.dafttech.filters4s.ast
+package de.lhns.filters4s.ast
 
 case class VarRef(name: String) extends Expr {
   override def tpeOption: Option[ExprType[_]] = None

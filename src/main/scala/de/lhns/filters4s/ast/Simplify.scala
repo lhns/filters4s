@@ -1,20 +1,29 @@
-package net.dafttech.filters4s.ast
+package de.lhns.filters4s.ast
 
 import cats.Eval
 import cats.syntax.apply._
 import cats.syntax.traverse._
-import net.dafttech.filters4s.ast.Op._
+import de.lhns.filters4s.ast.Op._
 
 object Simplify {
   private def simplifyComparisons(expr: Expr): Eval[Expr] = Eval.defer(expr match {
     case Eq(a, b) if a == b =>
       Eval.now(Const.True)
 
-    case Le(a, b) if a == b =>
+    case Lt(a, b) if a == b =>
       Eval.now(Const.False)
 
-    case LEq(a, b) if a == b =>
-      Eval.now(Const.True)
+    case Gt(a, b) if a == b =>
+      Eval.now(Const.False)
+
+    case Eq(a@Const(_, _), b@Const(_, _)) =>
+      Eval.now(a === b)
+
+    case Lt(a@Const(_, _), b@Const(_, _)) =>
+      Eval.now(a < b)
+
+    case Gt(a@Const(_, _), b@Const(_, _)) =>
+      Eval.now(a > b)
 
     case Eq(ExprType.BoolType(a), ExprType.BoolType(b)) =>
       (simplifyComparisons(a), simplifyComparisons(b)).tupled.map {
@@ -22,16 +31,16 @@ object Simplify {
           (a && b) || (!a && !b)
       }
 
-    case Le(ExprType.BoolType(a), ExprType.BoolType(b)) =>
+    case Lt(ExprType.BoolType(a), ExprType.BoolType(b)) =>
       (simplifyComparisons(a), simplifyComparisons(b)).tupled.map {
         case (a, b) =>
           !a && b
       }
 
-    case LEq(ExprType.BoolType(a), ExprType.BoolType(b)) =>
+    case Gt(ExprType.BoolType(a), ExprType.BoolType(b)) =>
       (simplifyComparisons(a), simplifyComparisons(b)).tupled.map {
         case (a, b) =>
-          !a || b
+          a && !b
       }
 
     case op: Op =>
@@ -70,26 +79,32 @@ object Simplify {
         case And(exprs) if exprs.contains(Const.False) =>
           Eval.now(Const.False)
 
-        case And(exprs) if exprs.forall(_ == Const.True) =>
-          Eval.now(Const.True)
-
         case And(exprs) =>
-          Eval.now(And(exprs.flatMap {
+          val newExprs = exprs.flatMap {
             case And(exprs) => exprs
             case expr => List(expr)
-          }))
+          }.filterNot(_ == Const.True)
+
+          Eval.now {
+            if (newExprs.isEmpty) Const.True
+            else if (newExprs.sizeIs == 1) newExprs.head
+            else And(newExprs)
+          }
 
         case Or(exprs) if exprs.contains(Const.True) =>
           Eval.now(Const.True)
 
-        case Or(exprs) if exprs.forall(_ == Const.False) =>
-          Eval.now(Const.False)
-
         case Or(exprs) =>
-          Eval.now(Or(exprs.flatMap {
+          val newExprs = exprs.flatMap {
             case Or(exprs) => exprs
             case expr => List(expr)
-          }))
+          }.filterNot(_ == Const.False)
+
+          Eval.now {
+            if (newExprs.isEmpty) Const.False
+            else if (newExprs.sizeIs == 1) newExprs.head
+            else Or(newExprs)
+          }
 
         case op =>
           Eval.now(op)
