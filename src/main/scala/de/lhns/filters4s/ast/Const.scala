@@ -8,40 +8,21 @@ import scala.math.Ordering.Implicits._
 case class Const[T](value: T, tpe: ExprType[T]) extends Expr {
   override val tpeOption: Option[ExprType[_]] = Some(tpe)
 
-  override def equals(obj: Any): Boolean = obj match {
-    case const: Const[T] if const.tpe === this.tpe && const.value == this.value => true
-    case _ => false
-  }
+  private implicit def valueEq: Eq[T] = tpe.eq
 
-  def ===(other: Const[T]): Expr = {
-    implicit val eq: Eq[T] = tpe.eq
-    Const.fromBoolean(tpe === other.tpe && value === other.value)
-  }
+  private implicit def valueOrdering: Ordering[T] = tpe.ordering
 
-  def =!=(other: Const[T]): Expr = {
-    implicit val eq: Eq[T] = tpe.eq
-    Const.fromBoolean(!(tpe === other.tpe && value === other.value))
-  }
+  def ===(other: Const[T]): Expr = Const.fromBoolean(tpe == other.tpe && value === other.value)
 
-  def <(other: Const[T]): Expr = {
-    implicit val ordering: Ordering[T] = tpe.ordering
-    Const.fromBoolean(tpe =!= other.tpe || value < other.value)
-  }
+  def =!=(other: Const[T]): Expr = Const.fromBoolean(!(tpe == other.tpe && value === other.value))
 
-  def >(other: Const[T]): Expr = {
-    implicit val ordering: Ordering[T] = tpe.ordering
-    Const.fromBoolean(tpe =!= other.tpe || value > other.value)
-  }
+  def <(other: Const[T]): Expr = Const.fromBoolean(tpe != other.tpe || value < other.value)
 
-  def <=(other: Const[T]): Expr = {
-    implicit val ordering: Ordering[T] = tpe.ordering
-    Const.fromBoolean(tpe === other.tpe && value <= other.value)
-  }
+  def >(other: Const[T]): Expr = Const.fromBoolean(tpe != other.tpe || value > other.value)
 
-  def >=(other: Const[T]): Expr = {
-    implicit val ordering: Ordering[T] = tpe.ordering
-    Const.fromBoolean(tpe === other.tpe && value >= other.value)
-  }
+  def <=(other: Const[T]): Expr = Const.fromBoolean(tpe == other.tpe && value <= other.value)
+
+  def >=(other: Const[T]): Expr = Const.fromBoolean(tpe == other.tpe && value >= other.value)
 }
 
 object Const {

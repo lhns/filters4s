@@ -124,21 +124,6 @@
         "or"
       ]
     },
-    "xor": {
-      "type": "object",
-      "properties": {
-        "xor": {
-          "type": "array",
-          "minItems": 2,
-          "items": {
-            "$ref": "#/$defs/expr"
-          }
-        }
-      },
-      "required": [
-        "xor"
-      ]
-    },
     "not": {
       "type": "object",
       "properties": {
@@ -196,38 +181,6 @@
       },
       "required": [
         "less"
-      ]
-    },
-    "greaterEqual": {
-      "type": "object",
-      "properties": {
-        "greaterEqual": {
-          "type": "array",
-          "minItems": 2,
-          "maxItems": 2,
-          "items": {
-            "$ref": "#/$defs/expr"
-          }
-        }
-      },
-      "required": [
-        "greaterEqual"
-      ]
-    },
-    "lessEqual": {
-      "type": "object",
-      "properties": {
-        "lessEqual": {
-          "type": "array",
-          "minItems": 2,
-          "maxItems": 2,
-          "items": {
-            "$ref": "#/$defs/expr"
-          }
-        }
-      },
-      "required": [
-        "lessEqual"
       ]
     },
     "like": {
@@ -300,9 +253,6 @@
           "$ref": "#/$defs/or"
         },
         {
-          "$ref": "#/$defs/xor"
-        },
-        {
           "$ref": "#/$defs/not"
         },
         {
@@ -313,12 +263,6 @@
         },
         {
           "$ref": "#/$defs/less"
-        },
-        {
-          "$ref": "#/$defs/greaterEqual"
-        },
-        {
-          "$ref": "#/$defs/lessEqual"
         },
         {
           "$ref": "#/$defs/like"

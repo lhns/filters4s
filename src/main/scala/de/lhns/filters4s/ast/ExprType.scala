@@ -16,19 +16,18 @@ sealed trait ExprType[T] {
 
   override def toString: String = name
 
-  protected def underying: ExprType[_]
+  override def hashCode(): Int = name.hashCode
+
+  override def equals(obj: Any): Boolean = obj match {
+    case exprType: ExprType[T] if exprType.name == name => true
+    case _ => false
+  }
 }
 
 object ExprType {
   @inline def apply[T](implicit termType: ExprType[T]): ExprType[T] = termType
 
   //private implicit def eqFromOrdering[A](implicit ordering: Ordering[A]): Eq[A] = Eq.instance[A](ordering.equiv)
-
-  private val eqAny: Eq[ExprType[_]] = new Eq[ExprType[_]] {
-    override def eqv(x: ExprType[_], y: ExprType[_]): Boolean = x.underying == y.underying
-  }
-
-  implicit def eq[T]: Eq[ExprType[T]] = eqAny.asInstanceOf[Eq[ExprType[T]]]
 
   implicit val invariant: Invariant[ExprType] = new Invariant[ExprType] {
     override def imap[A, B](fa: ExprType[A])(f: A => B)(g: B => A): ExprType[B] = new ExprType[B] {
@@ -37,8 +36,6 @@ object ExprType {
       override implicit val eq: Eq[B] = fa.eq.imap(f)(g)
 
       override implicit val ordering: Ordering[B] = fa.ordering.imap(f)(g)
-
-      override protected def underying: ExprType[_] = fa
     }
   }
 
@@ -48,9 +45,7 @@ object ExprType {
                                                 implicit
                                                 val eq: Eq[T],
                                                 val ordering: Ordering[T]
-                                              ) extends ExprType[T] {
-    override protected def underying: ExprType[_] = this
-  }
+  ) extends ExprType[T]
 
   implicit case object NullType extends AbstractExprType[Unit]("null")
 

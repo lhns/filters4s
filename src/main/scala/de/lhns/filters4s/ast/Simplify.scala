@@ -25,6 +25,8 @@ object Simplify {
     case Gt(a@Const(_, _), b@Const(_, _)) =>
       Eval.now(a > b)
 
+    // TODO: case In(a, bSeq) =>
+
     case Eq(ExprType.BoolType(a), ExprType.BoolType(b)) =>
       (simplifyComparisons(a), simplifyComparisons(b)).tupled.map {
         case (a, b) =>

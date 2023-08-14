@@ -5,19 +5,9 @@ import cats.instances.seq._
 import cats.syntax.flatMap._
 import cats.syntax.functor._
 import cats.syntax.traverse._
-import de.lhns.filters4s.ast.Op._
 
 sealed abstract class Op extends Expr {
   type Self <: Op
-
-  def foldOp[C](
-                 eq: Eq => C,
-                 lt: Lt => C,
-                 gt: Gt => C,
-                 not: Not => C,
-                 and: And => C,
-                 or: Or => C,
-               ): C
 
   def transformOperandsF[F[_] : Monad](f: Expr => F[Expr]): F[Self]
 
@@ -50,15 +40,6 @@ object Op {
   case class Eq(a: Expr, b: Expr) extends Op {
     override type Self = Eq
 
-    override def foldOp[C](
-                            eq: Eq => C,
-                            le: Lt => C,
-                            gt: Gt => C,
-                            not: Not => C,
-                            and: And => C,
-                            or: Or => C,
-                          ): C = eq(this)
-
     override def transformOperandsF[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
       for {
         a2 <- f(a)
@@ -69,15 +50,6 @@ object Op {
 
   case class Lt(a: Expr, b: Expr) extends Op {
     override type Self = Lt
-
-    override def foldOp[C](
-                            eq: Eq => C,
-                            le: Lt => C,
-                            gt: Gt => C,
-                            not: Not => C,
-                            and: And => C,
-                            or: Or => C,
-                          ): C = le(this)
 
     override def transformOperandsF[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
       for {
@@ -90,15 +62,6 @@ object Op {
   case class Gt(a: Expr, b: Expr) extends Op {
     override type Self = Gt
 
-    override def foldOp[C](
-                            eq: Eq => C,
-                            lt: Lt => C,
-                            gt: Gt => C,
-                            not: Not => C,
-                            and: And => C,
-                            or: Or => C,
-                          ): C = gt(this)
-
     override def transformOperandsF[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
       for {
         a2 <- f(a)
@@ -109,15 +72,6 @@ object Op {
 
   case class In(a: Expr, bSeq: Seq[Expr]) extends Op {
     override type Self = In
-
-    override def foldOp[C](
-                            eq: Eq => C,
-                            lt: Lt => C,
-                            gt: Gt => C,
-                            not: Not => C,
-                            and: And => C,
-                            or: Or => C,
-                          ): C = or(Or(bSeq.map(b => a === b)))
 
     override def transformOperandsF[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
       for {
@@ -130,15 +84,6 @@ object Op {
   case class Not(expr: Expr) extends Op {
     override type Self = Not
 
-    override def foldOp[C](
-                            eq: Eq => C,
-                            le: Lt => C,
-                            gt: Gt => C,
-                            not: Not => C,
-                            and: And => C,
-                            or: Or => C,
-                          ): C = not(this)
-
     override def transformOperandsF[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
       for {
         expr2 <- f(expr)
@@ -150,15 +95,6 @@ object Op {
     override type Self = And
 
     override def toString: String = productPrefix + exprs.mkString("(", ",", ")")
-
-    override def foldOp[C](
-                            eq: Eq => C,
-                            le: Lt => C,
-                            gt: Gt => C,
-                            not: Not => C,
-                            and: And => C,
-                            or: Or => C,
-                          ): C = and(this)
 
     override def transformOperandsF[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
       for {
@@ -175,15 +111,6 @@ object Op {
     override type Self = Or
 
     override def toString: String = productPrefix + exprs.mkString("(", ",", ")")
-
-    override def foldOp[C](
-                            eq: Eq => C,
-                            le: Lt => C,
-                            gt: Gt => C,
-                            not: Not => C,
-                            and: And => C,
-                            or: Or => C,
-                          ): C = or(this)
 
     override def transformOperandsF[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
       for {
