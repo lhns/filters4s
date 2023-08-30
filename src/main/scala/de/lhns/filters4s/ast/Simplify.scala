@@ -6,6 +6,23 @@ import cats.syntax.traverse._
 import de.lhns.filters4s.ast.Op._
 
 object Simplify {
+  private def resolveVars(expr: Expr, scopes: List[VarScope]): Eval[Expr] = Eval.defer(expr match {
+    case scope: VarScope =>
+      resolveVars(scope.body, scope +: scopes)
+
+    case varRef: VarRef =>
+      Eval.always(
+        varRef.resolve(scopes)
+          .getOrElse(throw new RuntimeException("failed to resolve variable: " + varRef.name))
+      ).flatMap(resolveVars(_, scopes))
+
+    case op: Op =>
+      op.transformOperandsF(resolveVars(_, scopes))
+
+    case expr =>
+      Eval.now(expr)
+  })
+
   private def simplifyComparisons(expr: Expr): Eval[Expr] = Eval.defer(expr match {
     case Eq(a, b) if a == b =>
       Eval.now(Const.True)
@@ -117,7 +134,8 @@ object Simplify {
   })
 
   def apply(expr: Expr): Eval[Expr] =
-    simplifyComparisons(expr)
+    resolveVars(expr, List.empty)
+      .flatMap(simplifyComparisons)
       .flatMap(combNegations)
       .flatMap(simplifyAndOr)
 }

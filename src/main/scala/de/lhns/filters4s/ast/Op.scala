@@ -70,6 +70,16 @@ object Op {
         Gt(a2, b2)
   }
 
+  case class Like(a: Expr, b: Const[_]) extends Op {
+    override type Self = Like
+
+    override def transformOperandsF[F[_] : Monad](f: Expr => F[Expr]): F[Self] =
+      for {
+        a2 <- f(a)
+      } yield
+        Like(a2, b)
+  }
+
   case class In(a: Expr, bSeq: Seq[Expr]) extends Op {
     override type Self = In
 

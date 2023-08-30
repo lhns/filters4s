@@ -1,7 +1,8 @@
 package de.lhns.filters4s
 
 import de.lhns.filters4s.ast.Op._
-import de.lhns.filters4s.ast.{Const, Ref, Simplify}
+import de.lhns.filters4s.ast._
+import de.lhns.filters4s.doobie.DoobieCompiler
 import munit.FunSuite
 
 class SimplifySuite extends FunSuite {
@@ -31,5 +32,16 @@ class SimplifySuite extends FunSuite {
 
   test("simplify tree") {
     assertEquals(Simplify(!(Const.True && !(Const.False || Ref("test")))).value, Ref("test"))
+  }
+
+  test("resolve vars") {
+    val varName = "var"
+    assertEquals(Simplify(VarScope(varName, Ref("test"), Ref("test2") && VarRef(varName))).value, Ref("test2") && Ref("test"))
+  }
+
+  test("doobie") {
+    println(
+      DoobieCompiler.compile(!(Const.True && !(Const.False || Ref("test")))).value.toString()
+    )
   }
 }

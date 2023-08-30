@@ -2,7 +2,7 @@ inThisBuild(Seq(
   name := "filters4s",
   organization := "de.lhns",
 
-  scalaVersion := "2.13.6"
+  scalaVersion := "2.13.11"
 ))
 
 name := (ThisBuild / name).value
@@ -10,6 +10,7 @@ name := (ThisBuild / name).value
 val V = new {
   val cats = "2.9.0"
   val circe = "0.14.5"
+  val doobie = "1.0.0-RC4"
   val fastparse = "3.0.0"
   val munit = "0.7.29"
 }
@@ -20,6 +21,7 @@ lazy val filters4s = project.in(file("."))
 
     libraryDependencies ++= Seq(
       "org.scalameta" %% "munit" % V.munit % Test,
+      "org.tpolecat" %% "doobie-core" % V.doobie,
       "org.typelevel" %% "cats-core" % V.cats,
       "com.lihaoyi" %% "fastparse" % V.fastparse,
       "io.circe" %% "circe-core" % V.circe,
