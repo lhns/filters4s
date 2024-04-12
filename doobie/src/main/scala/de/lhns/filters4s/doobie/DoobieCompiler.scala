@@ -5,19 +5,19 @@ import cats.data.NonEmptyList
 import cats.syntax.apply._
 import cats.syntax.traverse._
 import de.lhns.filters4s.ast.Op.{And, Eq, Gt, In, Like, Lt, Not, Or}
-import de.lhns.filters4s.ast.{Const, Expr, Ref}
+import de.lhns.filters4s.ast.{Const, Expr, ExprType, Ref}
 import doobie._
 import doobie.implicits._
 
 object DoobieCompiler {
   def compile(expr: Expr): Eval[Fragment] = Eval.defer(expr match {
-    case Const(value, tpe) =>
+    case const@Const(value, tpe) =>
       //TODO
-      Eval.now(value match {
-        case () => fr"NULL"
-        case string: String => fr"$string"
-        case number: BigDecimal => fr"$number"
-        case boolean: Boolean => if (boolean) fr"TRUE" else fr"FALSE"
+      Eval.now(const match {
+        case ExprType.NullType(Const((), _)) => fr"NULL"
+        case ExprType.StringType(Const(string, _)) => fr"$string"
+        case ExprType.NumberType(Const(number, _)) => fr"$number"
+        case ExprType.BoolType(Const(boolean, _)) => if (boolean) fr"TRUE" else fr"FALSE"
         case _ => throw new RuntimeException(s"unsupported db type: $value")
       })
 

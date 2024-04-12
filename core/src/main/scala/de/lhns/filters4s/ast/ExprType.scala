@@ -11,8 +11,11 @@ sealed trait ExprType[T] {
 
   implicit val ordering: Ordering[T]
 
-  final def unapply[A <: Expr](expr: A): Option[A] =
-    Option.when(expr.tpeOption.contains(this))(expr)
+  /*final def unapply[A <: Expr](expr: A): Option[A] =
+    Option.when(expr.tpeOption.contains(this))(expr)*/
+
+  final def unapply(const: Const[_]): Option[Const[T]] =
+    Option.when(const.tpe == this)(const.asInstanceOf[Const[T]])
 
   override def toString: String = name
 
@@ -45,7 +48,7 @@ object ExprType {
                                                 implicit
                                                 val eq: Eq[T],
                                                 val ordering: Ordering[T]
-  ) extends ExprType[T]
+                                              ) extends ExprType[T]
 
   implicit case object NullType extends AbstractExprType[Unit]("null")
 
