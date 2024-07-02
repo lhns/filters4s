@@ -15,9 +15,9 @@ lazy val filters4s = project.in(file("."))
       "org.scalameta" %% "munit" % "0.7.29" % Test,
       "org.typelevel" %% "cats-core" % "2.10.0",
       "com.lihaoyi" %% "fastparse" % "2.3.3",
-      "io.circe" %% "circe-core" % "0.14.6",
-      "io.circe" %% "circe-generic" % "0.14.6",
-      "io.circe" %% "circe-parser" % "0.14.6",
+      "io.circe" %% "circe-core" % "0.14.9",
+      "io.circe" %% "circe-generic" % "0.14.9",
+      "io.circe" %% "circe-parser" % "0.14.9",
     ),
 
     testFrameworks += new TestFramework("munit.Framework"),
