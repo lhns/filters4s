@@ -12,7 +12,7 @@ lazy val filters4s = project.in(file("."))
     version := "0.0.0",
 
     libraryDependencies ++= Seq(
-      "org.scalameta" %% "munit" % "0.7.29" % Test,
+      "org.scalameta" %% "munit" % "1.0.2" % Test,
       "org.typelevel" %% "cats-core" % "2.10.0",
       "com.lihaoyi" %% "fastparse" % "2.3.3",
       "io.circe" %% "circe-core" % "0.14.6",
