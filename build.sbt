@@ -2,7 +2,7 @@ inThisBuild(Seq(
   name := "filters4s",
   organization := "net.dafttech",
 
-  scalaVersion := "2.13.12"
+  scalaVersion := "2.13.15"
 ))
 
 name := (ThisBuild / name).value
