@@ -4,13 +4,14 @@
     "const": {
       "type": "object",
       "properties": {
-        "const": {},
+        "value": {},
         "type": {
           "type": "string"
         }
       },
       "required": [
-        "const"
+        "value",
+        "type"
       ]
     },
     "varScope": {
